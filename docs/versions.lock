@@ -1,0 +1,40 @@
+# versions.lock
+#
+# Known-good environment record for this Frappe CRM stack.
+# Documentation / traceability only. Not consumed at runtime.
+
+## Docker images
+#
+# Pinned in docker-compose.yml as repository@sha256:<digest>.
+
+frappe/bench
+  digest: sha256:7cf2354c5024d8362c507619566fec700740e31bcd71a2e745e3ec9a3a778a2a
+  local image ID: same value
+
+mariadb
+  digest: sha256:456709ab146585d6189da05669b84384518baecd83670c9e5221f8c20a47cf1e
+  local image ID: same value
+
+redis
+  digest: sha256:ba6e394f6acc2a695ef1b6944f161b9ca813711739be68319fa0db3470673f1d
+  local image ID: same value
+
+## Frappe
+
+version: 15.121.1
+tag: v15.121.1
+branch: version-15
+HEAD: 8f801ade016078685c3165c96e38f84f249f5309
+
+## CRM
+
+version: 1.84.0
+tag: v1.84.0
+branch: main
+HEAD: 0adc6715d79b7647d1bcecf41f5d2cf928253b4b
+
+## Toolchain
+
+Python: 3.14.7
+Node: 24
+uv: 0.11.33
