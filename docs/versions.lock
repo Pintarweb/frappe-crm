@@ -38,3 +38,15 @@ HEAD: 0adc6715d79b7647d1bcecf41f5d2cf928253b4b
 Python: 3.14.7
 Node: 24
 uv: 0.11.33
+
+## Frappe WhatsApp (third-party)
+
+frappe_whatsapp
+  version: 1.0.12
+  branch: version-15
+  HEAD: 8441c3820c98828aa1f53faf47e7392d7d270748
+
+ark_whatsapp_guard
+  local commit: b128d7f3ea1ba545339893da64e8aa3d26f45a9c
+  purpose: HMAC-SHA256 guard for frappe_whatsapp.utils.webhook.webhook
+    (registered via override_whitelisted_methods; no DocTypes/tables)
