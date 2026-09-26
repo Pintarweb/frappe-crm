@@ -44,7 +44,9 @@ A customer remains an ongoing business relationship while individual trips are s
 
 The **Trip** is the central operational and commercial unit.
 
-A Trip represents a particular customer request/group/departure and contains the requirements, commercial negotiations, supplier fulfilment, payments, documents and operational history associated with that trip.
+A Trip represents a particular customer request/group/departure and is **initiated when the customer invoice is created (FK-D15)**. It is the enduring operational/commercial unit for supplier fulfilment, payments, documents and operational history.
+
+**Trip initiation boundary (FK-D15):** the preceding commercial phase — enquiry, requirements gathering, supplier sourcing, quotation/negotiation and customer written confirmation — occurs before the Trip is initiated and belongs to the preceding commercial/Deal phase. Ownership of those pre-invoice artifacts is held by the **CRM Deal** (FK-D17 FROZEN); Trip/Operations owns operational requirements and operational history from initiation onward.
 
 A single customer may have multiple simultaneous trips. Each trip maintains its own:
 - requirements
@@ -56,6 +58,8 @@ A single customer may have multiple simultaneous trips. Each trip maintains its 
 - additional arrangements
 - cancellation history
 - post-trip history
+
+**Note (FK-D15 / FK-D17):** items listed above that precede invoice creation — requirements, quotation history and customer confirmation — are produced in the commercial phase before the Trip is initiated and are owned by the **CRM Deal** (FK-D17 FROZEN); when a Trip is initiated, operational requirements and operational history become Trip/Operations-owned (FK-D05) while CRM retains the pre-invoice commercial history and CONFIRMED snapshot.
 
 ## 4. Traveller / Group Information
 
@@ -222,7 +226,7 @@ Therefore the commercial history can contain:
 
 ## 12. Customer Confirmation
 
-The customer's written confirmation is the trigger for moving the trip into confirmed business.
+The customer's written confirmation is the commercial confirmation/evidence that precedes invoice creation. **Invoice creation initiates the Trip (FK-D15); written confirmation alone does not.**
 
 Confirmation may arrive through:
 - WhatsApp
