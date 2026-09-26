@@ -43,14 +43,39 @@ Excluded (later boundaries): quotation representation/versioning, supplier procu
 
 ## 4. Genuine Commercial Enquiry Test
 
+> **Particularity, not completeness, starts the Deal.**
+
 A genuine commercial enquiry requires **all three**:
 1. An identifiable counterparty (Contact and/or Organization).
 2. Commercial intent to obtain Japan travel services/arrangements from FeelJapanK.
-3. At least one **concrete element of a particular Japan trip/service** — destination/route, timeframe, group size, or a named service.
+3. A **discernible particular Japan trip/service request**.
+
+The request does **not** need to be complete. Particularity may be established by **one or more** identifiable elements, such as:
+
+- destination/route;
+- timeframe/date;
+- group/party;
+- named service/component;
+- duration;
+- or another clearly identifiable element of the requested Japan arrangement.
+
+**No single signal is individually mandatory.** These are example signals, **not** a mandatory checklist; do **not** require destination + dates + pax + itinerary + budget before creating a Deal.
 
 > **Incomplete does not mean not an opportunity.** A Deal may be created and remain incomplete.
 
+**General interest, inspiration-seeking, or an insufficiently particular request remain pre-Deal** and should be clarified **before** creating a Deal.
+
 Contrast: "Any good Japan packages?" (generic/undirected) → clarify first, no Deal yet.
+
+### Boundary examples (illustrative, not mandatory criteria)
+
+- "Need Japan for 8 pax." → **Deal**
+- "Need Japan December for 8 pax." → **Deal**
+- "Need Tokyo for 5 days." → **Deal**
+- "We need a 5-day company trip for 30 people in November. Can you arrange something?" → **Deal**, even without a destination
+- "Any Japan packages?" → **No Deal**
+- "Boss, can you arrange Japan for our client?" → **No Deal**
+- "We want to bring our staff to Japan." → **No Deal** until sufficiently particular
 
 ### Incomplete request handling
 
@@ -59,7 +84,7 @@ Example: "Boss, can you arrange Japan trip for our client?"
 - Preserve the original communication.
 - Identify Contact/Organization.
 - Clarify enough to determine whether a **particular** commercial request exists.
-- Use native mechanisms — a communication/activity note and a **Task**, or the **optional** Lead mechanism (FK-D09) — while clarifying.
+- Use native mechanisms — a communication/activity note and a **Task**, or the **optional** Lead mechanism (FK-D09) — while clarifying. "Clarify before creating a Deal" does **not** imply clarification can only happen outside CRM; the optional Lead remains available (FK-D09).
 - Create the Deal **once the test holds**; allow it to remain incomplete.
 - **Never** invent a new persistent "Request" / "Holding Enquiry" object.
 

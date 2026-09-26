@@ -23,14 +23,18 @@ An item may be left blank or marked NOT APPLICABLE. Never mark an item KNOWN unl
 
 ## Quick Decision — Can this be a Deal?
 
+> **Particularity, not completeness, starts the Deal.**
+
 □ Contact/Organization identifiable
 □ Commercial intent exists
-□ At least one concrete element of a particular Japan trip/service exists (destination, timeframe, group, or named service)
+□ One or more identifiable elements of a particular Japan trip/service exist (e.g., destination, timeframe/date, group/party, named service, duration, or another clearly identifiable element) — **no single signal is mandatory**
 □ Original evidence retained
 
-- **YES** → create or continue the appropriate Deal.
-- **NO** → clarify; retain communication; use a native Task, or the optional Lead mechanism where appropriate.
-- **Ambiguous** → ask the customer or relevant person. **Never guess.**
+- **YES** → create or continue the appropriate Deal (it may remain incomplete).
+- **NO** — general interest, inspiration-seeking, or insufficiently particular → **no Deal**; clarify before creating a Deal. Retain the communication; use a native Task, or the optional Lead mechanism (FK-D09) where appropriate.
+- **AMBIGUOUS** → ask the customer or relevant person. **Never guess.**
+
+*These are example signals, not a mandatory checklist.*
 
 ---
 
