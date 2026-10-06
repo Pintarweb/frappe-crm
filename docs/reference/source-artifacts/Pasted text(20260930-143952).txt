@@ -1,0 +1,185 @@
+FeelJapanK Phase 1 — Supplier Quotation Capability / Architecture Plan — v0.1 (PROPOSED)
+Status: PROPOSED / PLAN — no implementation authorized. Extends, never overrides, FK-D12/D14/D15/D16/D17. Based on FJK-SQ-D01…D12.
+
+Executive architecture assessment
+Native-first is viable for the request → email → reply capture → evidence chain (native Print Format/Builder, native Email Account inbound, native Communication threading, native File), and for the Deal-side gathering/gate (existing D1 fields). Genuine gaps require minimal custom DocTypes for Supplier Quotation / Version / Request, template versioning, and extraction review/confirm; extraction/OCR/LLM is a future integration, not built now. Final Quotation is a representation decision pending (candidate recommended, not chosen). Trip/invoice remain Phase 2/3.
+
+Capability inventory
+CAP-01…CAP-17 (as listed). Summary dispositions below.
+
+Current native / FJK capability map (verified read-only)
+
+FJK app: 9 DocTypes (FJK Quotation[+Version(submittable), Version Item, Confirmation, Negotiation Entry], FJK Deal Component/Requirement Line/Guide Requirement/Activity Item); APIs (create_quotation/version/submit/confirm/add_negotiation/get_*); D1 custom fields on CRM Deal; Workspace FeelJapanK; Desk Page fjk-workspace; Vite bundle.
+
+Native: Print Format + Print Format Builder (frappe/printing/page/print_format_builder), Print Format (Jinja/HTML, sections/headings, css), Email Template; Email Account (incoming IMAP, append_to, email_sync_option); inbound parser frappe/email/receive.py (Message-ID / In-Reply-To, attachments, Communication with reference_doctype/reference_name); File; Communication.
+
+Absent: no OCR/LLM/parsing app; no supplier-quotation model; no template-versioning; no automated extraction.
+
+Gap analysis (per capability)
+(A native · B FJK · C gap · D native-config-suffices · E custom justified · F custom UI · G external · H risk · I deps · J disposition)
+CAP	Native
+01 Deal Info Gathering Template	D1 fields + docs
+02 Info Complete gate (reversible)	—
+03 Supplier Quotation Request	—
+04 Template Builder	Print Format Builder
+05 Template versioning	✗ (mutable)
+06 Native email send	Email/Communication
+07 Automated reply intake	Email Account IMAP + receive.py threading
+08 Evidence preservation	File/Communication
+09 Doc extraction	—
+10 OCR/image	—
+11 Review/confirm	—
+12 Structured Supplier Quotation	—
+13 Supplier Quotation version/history	—
+14 Validity/expiry/reconfirm	—
+15 Negotiation/requote history	—
+16 Final Quotation	—
+17 Deal operational context	D1 fields
+
+Native-first decision per capability
+CAP-01/04/06/07/08 → native-first (configure, don't code). CAP-02/03/05/11/12/13/14/15/17 → minimal custom as justified. CAP-09/10 → later integration. CAP-16 → decision.
+
+Proposed candidate data model (PLAN)
+CRM Deal (native)
+├─ D1 fields/children (existing) + fjk_info_complete (reversible, audited)
+├─ FJK Supplier Quotation Request (custom)
+│     ├─ template (Link FJK Supplier Request Template) + template_version
+│     ├─ generated_document (File) ; sent communication (Communication ref)
+│     └─ FJK Supplier Quotation (custom, Link deal + request)
+│            ├─ FJK Supplier Quotation Version (submittable: validity, pricing, items, source doc)
+│            │     └─ FJK SQ Version Item (child)
+│            └─ FJK Supplier Quotation Negotiation Entry (child)
+├─ (existing customer side) FJK Quotation → FJK Quotation Version → CONFIRMED → Final Quotation (TBD)
+Files (native) ↔ originals + extraction artifacts ; Communication (native) ↔ email thread
+Supplier Quotation and Customer Quotation are deliberately separate DocTypes (different commercial directions).
+
+Supplier Request architecture
+FJK Supplier Quotation Request (Deal link; template link; status Draft/Generated/Sent; generated file; send log). Only relevant sections rendered (template conditional). Sending uses native email; sending ≠ quotation received.
+
+Template Builder architecture
+
+Native Print Format Builder defines the request layout (sections/order/headings/tables/text/css).
+
+Custom FJK Supplier Request Template provides versioning (template name/version; stores the Print Format reference + config snapshot) — native Print Formats are mutable, so versioning is the justified custom part.
+
+A generated request retains template + template version + generated output + Deal + supplier + timestamp + send status + sent communication ref. Later template changes never alter historical generated requests (store the generated artifact).
+
+Supplier email architecture (native)
+
+Native: Email Account (outgoing + incoming IMAP), Communication, Email Template; frappe.sendmail(..., reference_doctype="FJK Supplier Quotation Request", reference_name=...).
+
+Outgoing send is native-sufficient. Message-ID issued by Frappe; Communication stores message_id/in_reply_to (Communication fields verified).
+
+Incoming reply architecture
+
+Native inbound exists: Email Account.enable_incoming + IMAP; receive.py parses Message-ID/In-Reply-To, saves attachments, creates a Communication with reference_doctype/reference_name, and resolves the reference via thread (in_reply_to→Communication) or append_to/subject match.
+
+Gap/risk: matching to a custom Request DocType depends on correct thread headers and Email Account append_to; failure modes: unmatched replies, duplicates, spoofed headers, mailbox permissions, supplier not replying in-thread (won't thread). If native proves insufficient → IMAP poller integration (future), not now.
+
+Captured reply → pending supplier-response event (Communication linked to Request/Deal) → extraction/review.
+
+Evidence preservation architecture
+
+Original email (sender/recipients/subject/date/body/thread) → native Communication (source evidence).
+
+Original attachment → native File (exact bytes, filename, MIME, timestamp), linked to Request/Deal and marked source evidence (minor link fields).
+
+Structured extraction → custom fields/child on FJK Supplier Quotation Version (extraction status; reviewer; corrections; confirmed_at/by).
+
+Original remains immutable; extracted data is a derived, non-authoritative layer.
+
+Extraction / OCR architecture (PLAN only)
+
+Deterministic: Excel (openpyxl), DOCX (python-docx), PDF text (pdfplumber/pypdf) — not installed; OCR (tesseract) — not installed; LLM — none.
+
+Conceptual: Upload/Receive → identify type → extract → normalise → operator review → correct → confirm → store. Never auto-trust.
+
+External service/model would be a future integration; not selected/installed now.
+
+Supplier quotation versioning model
+
+Parent FJK Supplier Quotation: supplier, Deal, request link, current_version, status.
+
+FJK Supplier Quotation Version (submittable/immutable): received_date, validity_from/to, currency, totals, items (child), conditions/free-text (Long Text), requested_changes, source_document (File), supplier_response, requote_of (Link), previous_version.
+
+Negotiation entries: child (date/actor/event/response).
+
+Immutability via submit; previous versions cannot be overwritten (new version per change); mirrors the existing FJK Quotation Version pattern.
+
+Validity / reconfirmation model
+
+Represented as validity_from/validity_to on each version; computed is_expired/validity_state (derived, optionally cached).
+
+On expiry: no "Deal Expired"; Deal stays open; mark version reconfirmation_required; create a new version (requote_of=old) on reconfirmation; original preserved with its original validity.
+
+Operator informed via the workspace/summary (no notifications built now).
+
+Info Complete state model
+
+State on CRM Deal (fjk_info_complete bool/enum) + audit (who/when) via Comments/Version or small log.
+
+Gating: quotation/request creation APIs check state; reopen → gate again.
+
+Reopening does not delete quotation history nor auto-invalidate supplier quotations.
+
+Permissions: Sales User may set; Sales Manager overrides; System Manager full.
+
+Final Quotation architecture comparison (DECISION PENDING)
+Model
+A. Separate immutable snapshot DocType
+B. Derived document from CONFIRMED
+C. State/marker on confirmed version
+D. Other
+Recommendation (PLAN only): B — derive/render the "Final Quotation" from the agreed CONFIRMED customer version, preserving the source version and labelling the generated reference; adopt A only if immutability of the label must be independent. Relationship to FK-D17 CONFIRMED is clarified, not changed. Not implemented.
+
+Deal operational-context model
+
+Capability (evidence-backed): scope/category; detailed pax breakdown; relevant requirements; current status; next action; Contact↔Deal context; correct-Deal identification; supplier quotation state; waiting-for-supplier; validity/reconfirmation state.
+
+Add only fields justified by evidence/FJK-SQ-D12; visual treatments (flags, dashboards, list styling) remain design decisions.
+
+Permissions / audit model
+
+Reuse CRM Sales User/Manager + System Manager; FJK records mirror Deal access (existing has_permission).
+
+Audit for: Info Complete/reopen; version create; confirmation; supplier quotation receipt; extraction review/correction/confirm; template change; request send; reply association — via Version history/Communication/audit log.
+
+Migration / data-impact
+
+No migration/backfill (default). New DocTypes start empty; existing CRM Deal links only; existing test records (CRM-DEAL-2026-00010, FJK-QUO-2026-00001) untouched; a new controlled test record may be needed later (separately approved).
+
+FK-D12 high-risk gate (per customization)
+For each custom item (§4): why native insufficient, gap, minimal customization, upgrade risk, data/security risk, alternative considered. Custom items: FJK Supplier Quotation Request, FJK Supplier Request Template (versioning), FJK Supplier Quotation(+Version/Items/Negotiation), Info-Complete field+audit, extraction review fields. Alternatives (Print Format-only, Communication-only, CRM Deal notes) considered and judged insufficient for structured, immutable, versioned history required by FJK-SQ-D04/D09/D11.
+
+Dependencies
+Deal D1 (exists); Info Complete state; Print Format Builder; Email Account config; COMM/File; existing customer quotation model (Final Quotation); permission model.
+
+Risks
+Email threading dependability; unmatched/duplicate replies; extraction accuracy + operator dependency; template-versioning correctness; scope creep into Trip; FK-D17 alignment; FK-D12 gate compliance; upgrade impact of new DocTypes (mitigated by custom app + fixtures).
+
+Implementation sequencing (post-approval)
+
+Decisions (Final Quotation model; Info Complete representation; template versioning approach). 2) Capability PLAN split: SQ Request + template versioning + email (native) → SQ + Version + validity/history → evidence preservation → extraction (later). 3) Each via BUILD → VERIFY → EVIDENCE → FREEZE. Extraction/OCR as a separate later authorization.
+
+Test/evidence strategy (eventual BUILD)
+Automated: version immutability, validity computation, gate enforcement (incl. reopen), template-version retention, evidence linkage. Manual UX (operator): Deal→Info Complete→Request→email→reply capture→extract/review/confirm→history. Evidence additive; baseline preserved.
+
+NOT authorized
+No code/DocType/schema/migration/frontend/route/permission change; no email account change or send; no extraction/OCR/LLM; no Template Builder; no supplier quotation data; no test data; no commit/push; Trip/invoice items remain Phase 2/3; WhatsApp stays manual/human-in-the-loop.
+Reconciliation items (do not silently edit frozen docs)
+
+Record FJK-SQ decisions in Operating Convention / Reconciliation (PLAN).
+
+Reconcile FJK-SQ-D08 (email reply intake) with the intake/automation-deferral statements.
+
+Map Final Quotation ↔ FK-D17 CONFIRMED.
+Verification
+
+Files read: docs/architecture/FeelJapanK-Phase1-Business-Requirements-Capability-Architecture-Reconciliation-v0.1.md; evidence files (UI/UX); SOP/Template/Operating Convention/Master Plan (per prior reads in this session); FJK app (doctype/*, api.py, hooks.py, d1.py, permissions.py, setup.py); native Frappe (printing/doctype/print_format, printing/page/print_format_builder, email/doctype/email_account, email/doctype/email_template, email/receive.py, core/doctype/communication); sites/apps.txt.
+
+Files created: NONE (plan mode forbids; target plan doc not persisted). Files modified: NONE.
+
+Application changes: none. CRM records changed: none. DB/schema changes: none. Email changes: none.
+
+Git: HEAD 7664bf23349053b18da3d328c48d58355c1112ef; branch main; tracked-modified = 3 (pre-existing docs); untracked = 21; no commit/push.
+STOP — PLAN only. No BUILD.
