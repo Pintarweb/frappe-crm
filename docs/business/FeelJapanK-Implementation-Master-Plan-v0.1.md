@@ -182,7 +182,7 @@ Design and validate:
 3. Enquiries — **Request → Intake → Information Gathering → Deal**
 4. Lead as an **optional** intake/acquisition concept only (never mandatory; FK-D09)
 5. Multiple simultaneous Deals per customer
-6. Human-in-the-loop intake: **manual** WhatsApp/email handling with original enquiry evidence preserved (FK-D11); **no** automated WhatsApp intelligence, routing, extraction, or classification in Phase 1
+6. Human-in-the-loop intake: WhatsApp/email handling with original enquiry evidence preserved (FK-D11); **AI-assisted interpretation/extraction permitted as proposal-only, under mandatory human approval and mandatory source provenance (FK-D18)**; **no** autonomous or human-unapproved creation of authoritative CRM data, and no automated authoritative routing/classification in Phase 1
 7. Follow-ups
 8. Email/WhatsApp communication as manual channels
 9. Calls, notes, tasks and activities
@@ -204,7 +204,7 @@ Add customization only where there is a demonstrated business gap.
 
 ### Phase 1 shape
 
-Enquiries are frequently **incomplete**; information gathering before downstream operational execution is normal and expected. Phase 1 is **manual / human-in-the-loop**: the human operator determines the Contact, Organization, existing-vs-new Deal, requirements, context and evidence (FK-D11). Original enquiry evidence is preserved.
+Enquiries are frequently **incomplete**; information gathering before downstream operational execution is normal and expected. Phase 1 is **human-in-the-loop**: the human operator determines the Contact, Organization, existing-vs-new Deal, requirements, context and evidence (FK-D11). Manual determination is retained; **AI-assisted proposal generation is permitted per FK-D18**, with mandatory human approval and mandatory source provenance. Original enquiry evidence is preserved.
 
 The exact Deal information-gathering template and detailed mechanics are **not** specified in this roadmap — they belong to the workflow-design task to be performed after the roadmap is reconciled.
 
@@ -414,7 +414,7 @@ To prevent drift, the following should not be implemented merely because they ma
 - speculative synchronization
 - duplicated identity fields merely for convenience
 - broad CRM customization without a demonstrated workflow gap
-- premature AI automation
+- autonomous or unapproved AI automation (AI-assisted, human-approved proposal generation is permitted per FK-D18)
 - mobile operational control
 - generalized messaging abstraction
 
@@ -459,6 +459,10 @@ When changing an important decision, record:
 
 Do not silently rewrite historical decisions.
 
+**Change log**
+
+- **2026-10-06 — Phase 1 AI-assisted intake (FK-D18).** What changed: Phase 1 design requirement 6 and the "Phase 1 shape" wording now permit AI-assisted, human-approved proposal generation; §7 no longer lists the intended AI intake proposal layer as excluded. Recorded as FROZEN `FK-D18` (partial supersession of `FK-D11`). Why: operator explicitly approved AI-assisted interpretation/extraction with mandatory human approval and mandatory source provenance. Affected phase: Phase 1 (CRM / pre-invoice). Consequences: the blanket Phase 1 "manual / no automated extraction" wording is relaxed to **proposal-only + human approval**; AI never becomes authoritative without human acceptance; Info Complete remains operator-controlled; supplier/customer quotation gates and all other frozen decisions unchanged. Previously implemented work: none affected (no implementation existed against the superseded clause).
+
 ---
 
 # 10. Current Position
@@ -469,9 +473,13 @@ Do not silently rewrite historical decisions.
 
 **Frappe CRM environment:** Installed and available.
 
-**CRM implementation:** Not yet designed for FeelJapanK.
+> **Updated 2026-09.** The position below supersedes the phrasing previously recorded here ("CRM implementation: Not yet designed…"), which is preserved as historical wording at the end of this section. Superseding authority for requirement/capability reconciliation: `docs/architecture/FeelJapanK-Phase1-Business-Requirements-Capability-Architecture-Reconciliation-v0.1.md`.
 
-**Trip implementation:** Not started.
+**CRM implementation:** Phase 1 native pilot executed — automated/API scenarios A–L, agent-executed UI, and genuine human UI-01…UI-10 completed. No customization applied (0 custom DocTypes/fields/scripts/workflows).
+
+**Phase 1 status:** **NOT ready to close.** Required next action is platform-neutral requirements/capability reconciliation, not remediation.
+
+**Trip implementation:** Not started (Phase 2). Trip remains a **core business requirement** (`Workflow §3`; `BR §1`), not a dropped or optional capability.
 
 **ERPNext implementation:** Not started.
 
@@ -479,9 +487,25 @@ Do not silently rewrite historical decisions.
 
 **Current next action:**
 
-> **Phase 1 — THINK: inspect and design the FeelJapanK CRM workflow against the actual installed Frappe CRM.**
+> **Phase 1 — reconcile business requirements, capabilities, and architecture (platform-neutral) before any remediation or Phase 2 design.**
 
 No ERPNext implementation should begin merely because ERPNext is available.
+
+### Superseded position (historical, preserved)
+
+Prior wording of this section, retained for traceability (superseded 2026-09):
+
+> **CRM implementation:** Not yet designed for FeelJapanK.
+>
+> **Trip implementation:** Not started.
+>
+> **ERPNext implementation:** Not started.
+>
+> **Integration:** Not started.
+>
+> **Current next action:**
+>
+> **Phase 1 — THINK: inspect and design the FeelJapanK CRM workflow against the actual installed Frappe CRM.**
 
 ---
 

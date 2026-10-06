@@ -16,6 +16,7 @@
 - **DECIDED** — the business/architecture decision has been explicitly accepted, but authority reconciliation/freeze is not yet complete.
 - **FROZEN** — reconciled with the authority chain and now authoritative.
 - **SUPERSEDED** — a previously FROZEN decision deliberately replaced by a later FROZEN decision; the historical record is preserved.
+- **PARTIALLY SUPERSEDED** — a previously FROZEN decision whose specified clause(s) are deliberately replaced by a later FROZEN decision, while its remaining principles stay authoritative; the historical record and retained scope are preserved.
 
 ### Frozen-decision rule
 
@@ -47,6 +48,10 @@ If authority documents conflict, the conflict is **reported and resolved through
 
 Changes to a FROZEN decision are recorded per Master Plan §9 Change Control (what changed, why, affected phase, consequences, reconsideration of prior work). Historical decisions are never silently rewritten.
 
+### Change log
+
+- **2026-10-06 — FK-D18 added; FK-D11 partially superseded.** What: recorded **FK-D18** (AI-assisted Phase 1 data interpretation — proposal-only, mandatory human approval + mandatory source provenance), **FROZEN**. Why: operator explicitly approved AI-assisted interpretation/extraction with mandatory human approval as an intended Phase 1 capability (counterpart reconciliation `docs/architecture/FeelJapanK-End-to-End-Architecture-Reconciliation-v0.1.md`). Affected phase: Phase 1 (CRM / pre-invoice). Consequences: the `FK-D11` automation-deferral / blanket Phase-1-"manual" clause is **partially superseded**; all `FK-D11` human-determination principles and all other frozen decisions are unchanged; **no implementation is authorized**. Reconsideration of prior work: none — no code/schema/integration was built against the superseded clause.
+
 ---
 
 ## 4. Register
@@ -63,13 +68,14 @@ Changes to a FROZEN decision are recorded per Master Plan §9 Change Control (wh
 | FK-D08 | CRM Organization ≠ ERPNext Customer; controlled mapping | FROZEN | v0.2 §14 | Keep entities separate; do not sync all fields. ERPNext Customer creation timing is now governed by **FK-D16** (FROZEN); mapping mechanics remain open. |
 | FK-D09 | Lead = optional CRM intake/acquisition, not a business object | FROZEN | Opportunity-Start & Lead Usage Rule | Lead never mandatory; known customer bypasses Lead; incomplete ≠ not an opportunity. |
 | FK-D10 | Communication context: Contact = person; explicit context = Deal; phone not authoritative for Deal | FROZEN | Communication Context Rule (FROZEN) | Explicit context wins; phone is fallback only; no silent Deal guessing. |
-| FK-D11 | Phase 1 manual human-in-the-loop intake | FROZEN | Phase 1 Manual Communication Intake Direction | Human determines contact/org/deal/evidence; WhatsApp automation deferred. |
+| FK-D11 | Phase 1 human-in-the-loop intake (**automation-deferral clause PARTIALLY SUPERSEDED by FK-D18**; human-determination principles retained) | FROZEN (PARTIALLY SUPERSEDED by FK-D18) | Phase 1 Manual Communication Intake Direction | Human determines contact/org/deal/evidence; **AI-assisted proposal generation permitted per FK-D18**; automated authoritative behaviour remains deferred. |
 | FK-D12 | Prefer native CRM; no broad customization without demonstrated gap | FROZEN | Master Plan §7 | No custom fields/DocTypes without a demonstrated business gap. |
 | FK-D13 | Frozen environment/security baseline | FROZEN | `docs/versions.lock`; Environment Foundation Freeze; G12 HMAC Guard Freeze | frappe 15.121.1 / crm 1.84.0 / frappe_whatsapp 1.0.12 / ark_whatsapp_guard 0.0.1; HMAC guard is the security control. |
 | FK-D14 | Written WhatsApp/email confirmation is sufficient commercial evidence; manual marking; auto-detection deferred | FROZEN | v0.2 §6; Workflow §12 | Preserve the written confirmation as evidence. |
 | **FK-D15** | **Trip Initiation Boundary — a Deal becomes a Trip when the customer invoice is created**; written confirmation precedes invoice creation as evidence; quotation confirmation alone does not initiate a Trip | **FROZEN** | Owner decision reconciled into v0.2 §1/§6/§9, Workflow §3/§12, SOP §12 | Invoice creation is the authoritative Trip trigger. Not Deal Won, not payment, not quotation confirmation. |
 | **FK-D16** | **ERPNext Customer Creation Timing** — an ERPNext Customer is created when the customer first needs to participate in an actual ERPNext financial transaction (the customer's first invoice), once per accounting/legal party, and reused for all later Deals and Trips; not at enquiry, Deal, quotation, or written-confirmation stage; creation coincides with or immediately precedes invoice creation, never after | **FROZEN** | v0.2 §14, §15 (supplier-master precedent); FK-D06, FK-D08, FK-D15; FK-D16 assessment | Implementation deferred. Existing Customer reused; a new Deal, a new Trip, an abandoned enquiry, or a quotation does not create a new Customer. |
 | **FK-D17** | **Pre-Invoice Commercial Ownership** — the pre-invoice commercial state of a Deal (enquiry, pre-Trip requirements, supplier quotations/re-quotes, customer quotation versions V1..Vn, negotiation history, written confirmation evidence, CONFIRMED snapshot) is owned by Frappe CRM (the Deal); not by Trip/Operations (no Trip before invoice, FK-D15) and not by ERPNext; when a Trip is initiated, operational requirements/history become Trip-owned (FK-D05), while CRM retains the pre-invoice commercial history and CONFIRMED snapshot as historical commercial record | **FROZEN** | FK-D01, FK-D04, FK-D05, FK-D06, FK-D15; v0.2 §4–§6; Workflow §10–§12, §31 | Implementation/data model deferred. Business quotations are not required to be native ERPNext Quotation documents. A future decision to require ERPNext-native quotations would need controlled revision. |
+| **FK-D18** | **AI-Assisted Phase 1 Data Interpretation** — AI-assisted interpretation/extraction of customer communication is architecturally permitted in Phase 1 as **proposal-only**, under **mandatory human approval** and **mandatory source provenance**; AI output never becomes authoritative CRM data without explicit human acceptance; AI may not silently approve its own output, mark Info Complete, make final transportation/accommodation allocation, trigger a Supplier Quotation Request, or generate a Customer Quotation. Partially supersedes FK-D11 (automation-deferral clause only). | **FROZEN** | Operator approval 2026-10-06; `docs/architecture/FeelJapanK-FK-D18-AI-Assisted-Phase1-Data-Interpretation-Decision-v0.1.md`; `docs/architecture/FeelJapanK-End-to-End-Architecture-Reconciliation-v0.1.md` | **Permission/scope only — no implementation.** Retains FK-D11 human determination; AI does **not** authorize autonomous authoritative CRM decisions. Confirmation detection/marking remains governed by **FK-D14**. Any implementation requires the **FK-D12** review/gate. |
 
 ---
 
