@@ -1,0 +1,114 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-10-04 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "date_from",
+  "date_to",
+  "hotel",
+  "location",
+  "demand",
+  "demand_status",
+  "room_type",
+  "occupancy",
+  "quantity",
+  "allocated_pax",
+  "is_special",
+  "status",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "date_from",
+   "fieldtype": "Date",
+   "label": "Stay From",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "date_to",
+   "fieldtype": "Date",
+   "label": "Stay To"
+  },
+  {
+   "fieldname": "hotel",
+   "fieldtype": "Data",
+   "label": "Hotel / Stay",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "label": "Location"
+  },
+  {
+   "fieldname": "demand",
+   "fieldtype": "Int",
+   "label": "Demand (Pax)",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "demand_status",
+   "fieldtype": "Select",
+   "label": "Demand Status",
+   "options": "KNOWN\nMISSING\nTO CONFIRM\nCUSTOMER-CONFIRMED\nNOT APPLICABLE",
+   "default": "KNOWN"
+  },
+  {
+   "fieldname": "room_type",
+   "fieldtype": "Select",
+   "label": "Room Type",
+   "options": "\nSingle\nTwin\nTriple\nOther",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "occupancy",
+   "fieldtype": "Int",
+   "label": "Occupancy (per room)"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Int",
+   "label": "Room Quantity",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "allocated_pax",
+   "fieldtype": "Int",
+   "label": "Allocated Pax"
+  },
+  {
+   "fieldname": "is_special",
+   "fieldtype": "Check",
+   "label": "Special / VIP Allocation",
+   "default": "0"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "KNOWN\nMISSING\nTO CONFIRM\nCUSTOMER-CONFIRMED\nNOT APPLICABLE",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-04 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FeelJapanK CRM",
+ "name": "FJK Accommodation Allocation",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "istable": 1,
+ "editable_grid": 1
+}

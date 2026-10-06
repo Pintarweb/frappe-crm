@@ -1,0 +1,9 @@
+{
+  "name": "feeljapank_crm",
+  "version": "0.0.1",
+  "private": true,
+  "description": "FeelJapanK Desk Page assets (Increment 2 / dedicated Vite build)",
+  "scripts": {
+    "build": "yarn --cwd frontend build"
+  }
+}

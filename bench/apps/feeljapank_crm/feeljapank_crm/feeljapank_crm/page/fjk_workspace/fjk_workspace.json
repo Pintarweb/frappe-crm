@@ -1,0 +1,20 @@
+{
+ "creation": "2026-09-30 00:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Page",
+ "icon": "integration",
+ "idx": 0,
+ "modified": "2026-09-30 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FeelJapanK CRM",
+ "name": "fjk-workspace",
+ "owner": "Administrator",
+ "page_name": "fjk-workspace",
+ "roles": [
+  {"role": "Sales User"},
+  {"role": "Sales Manager"},
+  {"role": "System Manager"}
+ ],
+ "standard": "Yes",
+ "title": "FeelJapanK Workspace"
+}

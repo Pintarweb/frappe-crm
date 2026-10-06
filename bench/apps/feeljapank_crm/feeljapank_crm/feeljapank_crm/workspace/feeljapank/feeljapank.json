@@ -1,0 +1,45 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"fjkhdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h5\\\"><b>FEELJAPANK</b></span>\",\"col\":12}},{\"id\":\"fjksc1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"FeelJapanK Workspace\",\"col\":3}},{\"id\":\"fjksc2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"FJK Quotations\",\"col\":3}},{\"id\":\"fjksc3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"FJK Quotation Versions\",\"col\":3}},{\"id\":\"fjksc4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Deals\",\"col\":3}},{\"id\":\"fjksp1\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"fjkhdr2\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>PRE-INVOICE COMMERCIAL WORK</b>\",\"col\":12}},{\"id\":\"fjkl1\",\"type\":\"link\",\"data\":{\"link_type\":\"DocType\",\"link_to\":\"FJK Quotation\",\"label\":\"FJK Quotations\",\"col\":4}},{\"id\":\"fjkl2\",\"type\":\"link\",\"data\":{\"link_type\":\"DocType\",\"link_to\":\"FJK Quotation Version\",\"label\":\"Quotation Versions\",\"col\":4}},{\"id\":\"fjkl3\",\"type\":\"link\",\"data\":{\"link_type\":\"Page\",\"link_to\":\"fjk-workspace\",\"label\":\"Deal Workflow Workspace\",\"col\":4}}]",
+ "creation": "2026-09-30 00:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "integration",
+ "idx": 0,
+ "indicator_color": "blue",
+ "is_hidden": 0,
+ "label": "FeelJapanK",
+ "links": [
+  {"hidden": 0, "is_query_report": 0, "label": "Pre-Invoice Commercial Work", "link_count": 0, "onboard": 1, "type": "Card Break"},
+  {"hidden": 0, "is_query_report": 0, "label": "FJK Quotations", "link_count": 0, "link_to": "FJK Quotation", "link_type": "DocType", "onboard": 1, "type": "Link"},
+  {"hidden": 0, "is_query_report": 0, "label": "FJK Quotation Versions", "link_count": 0, "link_to": "FJK Quotation Version", "link_type": "DocType", "onboard": 1, "type": "Link"},
+  {"hidden": 0, "is_query_report": 0, "label": "Deals", "link_count": 0, "link_to": "CRM Deal", "link_type": "DocType", "onboard": 1, "type": "Link"},
+  {"hidden": 0, "is_query_report": 0, "label": "Organizations", "link_count": 0, "link_to": "CRM Organization", "link_type": "DocType", "onboard": 1, "type": "Link"},
+  {"hidden": 0, "is_query_report": 0, "label": "Contacts", "link_count": 0, "link_to": "Contact", "link_type": "DocType", "onboard": 1, "type": "Link"}
+ ],
+ "modified": "2026-09-30 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FeelJapanK CRM",
+ "name": "FeelJapanK",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {"role": "Sales User"},
+  {"role": "Sales Manager"},
+  {"role": "System Manager"}
+ ],
+ "sequence_id": 1.0,
+ "shortcuts": [
+  {"color": "Blue", "label": "FeelJapanK Workspace", "link_to": "fjk-workspace", "type": "Page"},
+  {"color": "Blue", "label": "FJK Quotations", "link_to": "FJK Quotation", "type": "DocType"},
+  {"color": "Blue", "label": "FJK Quotation Versions", "link_to": "FJK Quotation Version", "type": "DocType"},
+  {"color": "Grey", "label": "Deals", "link_to": "CRM Deal", "type": "DocType"}
+ ],
+ "title": "FeelJapanK"
+}

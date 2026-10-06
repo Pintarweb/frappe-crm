@@ -1,0 +1,11 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "CRM Fields Layout",
+  "dt": "CRM Deal",
+  "layout": "[{\"name\": \"first_tab\", \"sections\": [{\"label\": \"Details\", \"name\": \"details_section\", \"opened\": true, \"columns\": [{\"name\": \"column_z9XL\", \"fields\": [\"organization\", \"annual_revenue\", \"next_step\"]}, {\"name\": \"column_gM4w\", \"fields\": [\"website\", \"closed_date\", \"deal_owner\"]}, {\"name\": \"column_gWmE\", \"fields\": [\"territory\", \"probability\"]}]}, {\"label\": \"Products\", \"name\": \"section_jHhQ\", \"opened\": true, \"columns\": [{\"name\": \"column_xiNF\", \"fields\": [\"products\"]}], \"editingLabel\": false, \"hideLabel\": true}, {\"label\": \"New Section\", \"name\": \"section_WNOQ\", \"opened\": true, \"columns\": [{\"name\": \"column_ziBW\", \"fields\": [\"total\"]}, {\"label\": \"\", \"name\": \"column_wuwA\", \"fields\": [\"net_total\"]}], \"hideBorder\": true, \"hideLabel\": true}, {\"label\": \"FeelJapanK Requirements\", \"name\": \"fjk_requirements_section\", \"opened\": true, \"columns\": [{\"name\": \"fjk_col_context_1\", \"fields\": [\"fjk_request_nature\", \"fjk_commercial_intent\", \"fjk_destination_route\", \"fjk_timeframe\", \"fjk_exact_dates\"]}, {\"name\": \"fjk_col_context_2\", \"fields\": [\"fjk_duration\", \"fjk_total_pax\", \"fjk_adults\", \"fjk_children\", \"fjk_infants\", \"fjk_trip_purpose\", \"fjk_other_shared_context\", \"fjk_ready_for_quotation\", \"fjk_info_complete\"]}]}, {\"label\": \"FeelJapanK Requirement Detail\", \"name\": \"fjk_requirements_detail_section\", \"opened\": true, \"columns\": [{\"name\": \"fjk_col_grids_1\", \"fields\": [\"fjk_components\", \"fjk_requirement_lines\"]}, {\"name\": \"fjk_col_grids_2\", \"fields\": [\"fjk_guide_requirements\", \"fjk_activity_items\"]}]}, {\"label\": \"FeelJapanK Allocations\", \"name\": \"fjk_allocations_section\", \"opened\": true, \"columns\": [{\"name\": \"fjk_col_alloc_1\", \"fields\": [\"fjk_transport_allocations\"]}, {\"name\": \"fjk_col_alloc_2\", \"fields\": [\"fjk_accommodation_allocations\"]}]}]}]",
+  "modified": "2026-10-05 18:18:41.257155",
+  "name": "CRM Deal-Data Fields",
+  "type": "Data Fields"
+ }
+]
