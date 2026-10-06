@@ -302,6 +302,8 @@ This remains **unresolved and deferred**. Further pilot evidence is required bef
 
 The same missing information may not have the same effect at each stage.
 
+> **Reconciliation note (2026-09, see `docs/architecture/FeelJapanK-Phase1-Business-Requirements-Capability-Architecture-Reconciliation-v0.1.md`).** Genuine human UI evidence now exists (UI-08), so the readiness model is reclassified from *deferred* to **OPEN** (`RC-R11` / `RC-Q08`). The readiness model is a business capability to be defined, not a capability that native CRM absence removes. Original wording retained for history.
+
 ---
 
 ## 17. Conceptual Examples (illustrative only)

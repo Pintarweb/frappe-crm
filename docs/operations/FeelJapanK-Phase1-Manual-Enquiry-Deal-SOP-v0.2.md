@@ -260,11 +260,19 @@ The purpose of the pilot is to discover whether native CRM plus human operating 
 - No structured requirement-history or quotation-version object in CRM.
 - No Trip object; deal-to-trip transition mechanism not yet designed.
 
+> **Reconciliation note (2026-09).** The two lines above are **native platform observations**, not business-scope decisions. Customer quotation versions V1..Vn and negotiation history are a **CRM-owned business requirement** (`FK-D17`, `BR §4–§5`); the absence of a native object is a capability gap to be assessed, not a reason the requirement does not exist. The Trip object is a **core Phase 2 business requirement** (`Workflow §3`; `Master Plan Phase 2`), not merely a "not yet designed" convenience. See `…Capability-Architecture-Reconciliation-v0.1.md`.
+
 ---
 
 ## 17. Deferred / Not Authorized
 
 Not authorized by this SOP: automated WhatsApp→Deal routing; automatic Contact/Deal matching; automatic Deal creation; AI classification/extraction/transcription; screenshot/document/audio interpretation; automated triage; Trip DocTypes; quotation versioning; supplier models; ERPNext; P01 integration; new auth; generic integration infrastructure.
+
+> **Reconciliation note (2026-09, see `docs/architecture/FeelJapanK-Phase1-Business-Requirements-Capability-Architecture-Reconciliation-v0.1.md`).**
+> Prior wording preserved above. This deferral list mixes two different things and must not be read as a business-scope decision:
+> - **Genuine deliberate deferrals (retained):** automated WhatsApp routing, automatic Contact/Deal matching, automatic Deal creation, AI classification/extraction/transcription, automated triage, ERPNext, P01 integration, new auth, generic integration infrastructure.
+> - **Reopened for assessment (not business deferrals):** **quotation versioning** is required by `FK-D17`/`BR §4–§5`; "Trip DocTypes" is a **Phase 2 implementation** matter (`Workflow §3`, `Master Plan Phase 2`), not a dropped requirement; supplier models relate to later phases.
+> The status of these items is governed by the reconciliation document, not by this list.
 
 ---
 
