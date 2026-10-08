@@ -1,0 +1,215 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-10-08 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "proposal",
+  "run",
+  "source_doctype",
+  "source_name",
+  "section_break_target",
+  "target_deal",
+  "target_child_table",
+  "column_break_target",
+  "target_row",
+  "target_field",
+  "target_logical_key",
+  "section_break_result",
+  "effective_value",
+  "outcome",
+  "override",
+  "column_break_result",
+  "before_value",
+  "after_value",
+  "section_break_audit",
+  "idempotency_key",
+  "promoter",
+  "promoted_at",
+  "error_detail"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "FJK-AIPROMO-.YYYY.-",
+   "default": "FJK-AIPROMO-.YYYY.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "proposal",
+   "fieldtype": "Link",
+   "label": "AI Proposal",
+   "options": "FJK AI Proposal",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "run",
+   "fieldtype": "Link",
+   "label": "AI Interpretation Run",
+   "options": "FJK AI Interpretation Run",
+   "read_only": 1
+  },
+  {
+   "fieldname": "source_doctype",
+   "fieldtype": "Link",
+   "label": "Source DocType",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "source_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Source Record",
+   "options": "source_doctype",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_target",
+   "fieldtype": "Section Break",
+   "label": "Target (authoritative)"
+  },
+  {
+   "fieldname": "target_deal",
+   "fieldtype": "Link",
+   "label": "Target Deal",
+   "options": "CRM Deal",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "target_child_table",
+   "fieldtype": "Data",
+   "label": "Target Child Table (parent fieldname)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_target",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "target_row",
+   "fieldtype": "Data",
+   "label": "Target Row (existing child row name; blank = append)"
+  },
+  {
+   "fieldname": "target_field",
+   "fieldtype": "Data",
+   "label": "Target Field",
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_logical_key",
+   "fieldtype": "Data",
+   "label": "Target Logical Key"
+  },
+  {
+   "fieldname": "section_break_result",
+   "fieldtype": "Section Break",
+   "label": "Result"
+  },
+  {
+   "fieldname": "effective_value",
+   "fieldtype": "Small Text",
+   "label": "Effective Value",
+   "reqd": 1
+  },
+  {
+   "fieldname": "outcome",
+   "fieldtype": "Select",
+   "label": "Outcome",
+   "options": "PROMOTED\nBLOCKED\nFAILED",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "override",
+   "fieldtype": "Check",
+   "label": "Override Used",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_result",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "before_value",
+   "fieldtype": "Small Text",
+   "label": "Authoritative Value Before",
+   "read_only": 1
+  },
+  {
+   "fieldname": "after_value",
+   "fieldtype": "Small Text",
+   "label": "Authoritative Value After",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_audit",
+   "fieldtype": "Section Break",
+   "label": "Audit"
+  },
+  {
+   "fieldname": "idempotency_key",
+   "fieldtype": "Data",
+   "label": "Idempotency Key",
+   "unique": 1,
+   "read_only": 1,
+   "description": "Set only for PROMOTED outcomes (DS2). Null for BLOCKED/FAILED audit rows."
+  },
+  {
+   "fieldname": "promoter",
+   "fieldtype": "Link",
+   "label": "Promoter",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "promoted_at",
+   "fieldtype": "Datetime",
+   "label": "Promoted At",
+   "reqd": 1
+  },
+  {
+   "fieldname": "error_detail",
+   "fieldtype": "Small Text",
+   "label": "Error Detail",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-08 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FeelJapanK CRM",
+ "name": "FJK AI Proposal Promotion",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Sales Manager",
+   "read": 1
+  },
+  {
+   "role": "Sales User",
+   "read": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field"
+}

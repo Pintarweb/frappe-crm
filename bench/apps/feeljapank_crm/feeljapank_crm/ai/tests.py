@@ -33,6 +33,7 @@ from .errors import (
     ProviderTimeoutError,
     ProviderUnavailableError,
     RateLimitError,
+    RedirectRefusedError,
     ValidationError,
 )
 from .interface import AIProvider
@@ -286,7 +287,7 @@ def _d12b_checks() -> None:
     _check("approved_url_accepted", accepted)
 
     mapping = {
-        302: ProviderUnavailableError,
+        302: RedirectRefusedError,
         400: InvalidRequestError,
         401: AuthenticationError,
         402: AuthorizationBillingError,
@@ -299,7 +300,7 @@ def _d12b_checks() -> None:
         "http_error_mapping",
         all(isinstance(HTTPTransport._map_http_error(s), c) for s, c in mapping.items()),
     )
-    _check("redirect_refused", isinstance(HTTPTransport._map_http_error(302), ProviderUnavailableError))
+    _check("redirect_refused", isinstance(HTTPTransport._map_http_error(302), RedirectRefusedError))
 
     oversize_ok = False
     try:
@@ -767,6 +768,115 @@ def _d12c_checks() -> None:
     _check("validator_no_network_import", not _HTTP_IMPORT.search(val_src))
 
 
+class _ScriptedTransport:
+    def __init__(self, script=None):
+        self.script = list(script or [])
+        self.calls = 0
+        self.requests: list = []
+
+    def request(self, *, url: str, headers: dict, body: bytes) -> TransportResponse:
+        self.calls += 1
+        self.requests.append({"url": url})
+        item = self.script.pop(0) if self.script else TransportResponse(status=200, body=b"{}")
+        if isinstance(item, Exception):
+            raise item
+        return item
+
+
+def _d12f_checks() -> None:
+    ok = TransportResponse(status=200, body=b"{}")
+
+    def _call(transport):
+        return transport.request(url=ENDPOINT, headers={}, body=b"{}")
+
+    _check("d12f_default_max_attempts", RetryingTransport(_ScriptedTransport()).max_attempts == 3)
+
+    sleeps: list[float] = []
+    rec = lambda s: sleeps.append(s)  # noqa: E731
+
+    s = _ScriptedTransport([ok])
+    sleeps.clear()
+    _call(RetryingTransport(s, jitter=False, sleep=rec))
+    _check("d12f_first_success_no_retry", s.calls == 1 and sleeps == [])
+
+    s = _ScriptedTransport([ProviderUnavailableError("x"), ok])
+    sleeps.clear()
+    _call(RetryingTransport(s, max_attempts=3, jitter=False, backoff_seconds=1.0, backoff_cap=8.0, sleep=rec))
+    _check("d12f_transient_then_success", s.calls == 2 and sleeps == [1.0], sleeps)
+
+    s = _ScriptedTransport([ProviderUnavailableError("x")] * 3)
+    got = None
+    try:
+        _call(RetryingTransport(s, max_attempts=3, jitter=False, sleep=lambda _s: None))
+    except ProviderUnavailableError as exc:
+        got = type(exc)
+    _check("d12f_exhaustion_terminal", got is ProviderUnavailableError and s.calls == 3)
+
+    s = _ScriptedTransport([ProviderTimeoutError("t")] * 3)
+    sleeps.clear()
+    try:
+        _call(
+            RetryingTransport(
+                s, max_attempts=3, jitter=False, backoff_seconds=1.0, backoff_cap=8.0, sleep=rec
+            )
+        )
+    except ProviderTimeoutError:
+        pass
+    _check("d12f_exponential_backoff", sleeps == [1.0, 2.0], sleeps)
+
+    _check(
+        "d12f_backoff_cap",
+        RetryingTransport(_ScriptedTransport(), backoff_seconds=1.0, backoff_cap=8.0, jitter=False)._delay(10)
+        == 8.0,
+    )
+    _check(
+        "d12f_jitter_bounds",
+        RetryingTransport(
+            _ScriptedTransport(), backoff_seconds=1.0, backoff_cap=8.0, jitter=True, uniform=lambda a, b: 0.75
+        )._delay(1)
+        == 0.75,
+    )
+
+    for label, exc in (
+        ("401", AuthenticationError("a")),
+        ("400", InvalidRequestError("b")),
+        ("422", InvalidRequestError("c")),
+    ):
+        s = _ScriptedTransport([exc, ok])
+        raised = False
+        try:
+            _call(RetryingTransport(s, max_attempts=3, jitter=False, sleep=lambda _s: None))
+        except Exception:  # noqa: BLE001
+            raised = True
+        _check("d12f_non_retryable_{0}".format(label), raised and s.calls == 1, s.calls)
+
+    s = _ScriptedTransport([RateLimitError("r"), ok])
+    _call(RetryingTransport(s, max_attempts=3, jitter=False, sleep=lambda _s: None))
+    _check("d12f_429_retried", s.calls == 2, s.calls)
+
+    s = _ScriptedTransport([RedirectRefusedError("d"), ok])
+    raised = False
+    try:
+        _call(RetryingTransport(s, max_attempts=3, jitter=False, sleep=lambda _s: None))
+    except RedirectRefusedError:
+        raised = True
+    _check("d12f_redirect_non_retryable", raised and s.calls == 1, s.calls)
+    _check("d12f_redirect_mapping", isinstance(HTTPTransport._map_http_error(302), RedirectRefusedError))
+
+    ft = FakeTransport(response=TransportResponse(status=200, body=b"not-json"))
+    provider = DeepSeekProvider(
+        config=_config(),
+        transport=RetryingTransport(ft, max_attempts=3, jitter=False, sleep=lambda _s: None),
+        api_key="k",
+    )
+    malformed = False
+    try:
+        provider.interpret(_make_request())
+    except MalformedResponseError:
+        malformed = True
+    _check("d12f_structural_no_transport_retry", malformed and len(ft.requests) == 1, len(ft.requests))
+
+
 def _summary() -> list[tuple[str, bool, str]]:
     failed = [r for r in RESULTS if not r[1]]
     print("-" * 78)
@@ -795,12 +905,20 @@ def run_validation_tests() -> list[tuple[str, bool, str]]:
     return _summary()
 
 
+def run_retry_tests() -> list[tuple[str, bool, str]]:
+    """D12-F DS6 retry-policy tests."""
+    del RESULTS[:]
+    _d12f_checks()
+    return _summary()
+
+
 def run_all_ai_tests() -> list[tuple[str, bool, str]]:
-    """Full AI adapter test suite (D12-A + D12-B + D12-C)."""
+    """Full AI adapter test suite (D12-A + D12-B + D12-C + D12-F retry)."""
     del RESULTS[:]
     _d12a_checks()
     _d12b_checks()
     _d12c_checks()
+    _d12f_checks()
     return _summary()
 
 

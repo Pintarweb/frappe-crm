@@ -1,0 +1,95 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-10-07 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "disposition",
+  "from_state",
+  "to_state",
+  "column_break_1",
+  "reviewer",
+  "decided_at",
+  "section_break_1",
+  "edited_value",
+  "reason",
+  "superseded_by"
+ ],
+ "fields": [
+  {
+   "fieldname": "disposition",
+   "fieldtype": "Select",
+   "label": "Disposition",
+   "options": "ACCEPTED\nEDITED_ACCEPTED\nREJECTED\nDEFERRED\nSUPERSEDED",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "from_state",
+   "fieldtype": "Select",
+   "label": "From State",
+   "options": "PROPOSED\nACCEPTED\nEDITED_ACCEPTED\nREJECTED\nDEFERRED\nSUPERSEDED",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_state",
+   "fieldtype": "Select",
+   "label": "To State",
+   "options": "PROPOSED\nACCEPTED\nEDITED_ACCEPTED\nREJECTED\nDEFERRED\nSUPERSEDED",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reviewer",
+   "fieldtype": "Link",
+   "label": "Reviewer",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "decided_at",
+   "fieldtype": "Datetime",
+   "label": "Decided At",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "edited_value",
+   "fieldtype": "Small Text",
+   "label": "Edited Value (EDITED_ACCEPTED)"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Small Text",
+   "label": "Reason / Notes"
+  },
+  {
+   "fieldname": "superseded_by",
+   "fieldtype": "Link",
+   "label": "Superseded By (SUPERSEDED)",
+   "options": "FJK AI Proposal"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-07 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FeelJapanK CRM",
+ "name": "FJK AI Proposal Decision",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

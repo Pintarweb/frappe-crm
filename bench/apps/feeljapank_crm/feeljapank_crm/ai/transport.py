@@ -14,6 +14,7 @@ Uses only the standard library (``urllib``/``ssl``) — no third-party dependenc
 from __future__ import annotations
 
 import json
+import random
 import socket
 import ssl
 import time
@@ -33,6 +34,7 @@ from .errors import (
     ProviderTimeoutError,
     ProviderUnavailableError,
     RateLimitError,
+    RedirectRefusedError,
 )
 
 _RETRYABLE = (RateLimitError, ProviderUnavailableError, ProviderTimeoutError)
@@ -136,7 +138,8 @@ class HTTPTransport:
     @staticmethod
     def _map_http_error(status: int) -> AIProviderError:
         if 300 <= status < 400:
-            return ProviderUnavailableError("Redirect refused (status {0})".format(status))
+            # D12-F: redirects are refused and NON-retryable.
+            return RedirectRefusedError("Redirect refused (status {0})".format(status))
         error_cls = _STATUS_MAP.get(status, ProviderUnavailableError)
         return error_cls("Provider HTTP status {0}".format(status))
 
@@ -151,28 +154,44 @@ class HTTPTransport:
 
 
 class RetryingTransport:
-    """Bounded retry wrapper around any :class:`Transport` (D12-B boundary).
+    """Bounded retry wrapper around any :class:`Transport` (D12-B/D12-F boundary).
 
-    Exact counts/backoff remain OPEN; the mechanism is bounded and injectable so
-    tests never sleep or call the network.
+    DS6 (approved): bounded retry with maximum TOTAL attempts (default 3 =
+    1 initial + 2 retries) and capped exponential backoff with full jitter.
+    Injectable so tests never sleep or call the network.
     """
 
     def __init__(
         self,
         transport: Transport,
         *,
-        max_attempts: int = 1,
+        max_attempts: int = 3,
         backoff_seconds: float = 1.0,
+        backoff_cap: float = 8.0,
+        jitter: bool = True,
         retry_on: tuple[type[AIProviderError], ...] = _RETRYABLE,
         sleep=time.sleep,
+        uniform=random.uniform,
     ) -> None:
         if max_attempts < 1:
             raise ValueError("max_attempts must be >= 1")
+        if backoff_seconds < 0 or backoff_cap < 0:
+            raise ValueError("backoff values must be >= 0")
         self.transport = transport
         self.max_attempts = max_attempts
         self.backoff_seconds = backoff_seconds
+        self.backoff_cap = backoff_cap
+        self.jitter = jitter
         self.retry_on = retry_on
         self._sleep = sleep
+        self._uniform = uniform
+
+    def _delay(self, attempt: int) -> float:
+        # ``attempt`` is the 1-based number of the attempt that just failed.
+        delay = min(self.backoff_cap, self.backoff_seconds * (2 ** (attempt - 1)))
+        if self.jitter and delay > 0:
+            delay *= self._uniform(0.5, 1.0)
+        return delay
 
     def request(self, *, url: str, headers: dict[str, str], body: bytes) -> TransportResponse:
         attempt = 0
@@ -183,4 +202,4 @@ class RetryingTransport:
             except self.retry_on:
                 if attempt >= self.max_attempts:
                     raise
-                self._sleep(self.backoff_seconds * attempt)
+                self._sleep(self._delay(attempt))

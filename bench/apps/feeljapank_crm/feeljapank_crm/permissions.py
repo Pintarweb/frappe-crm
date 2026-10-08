@@ -27,3 +27,23 @@ def has_permission(doc, ptype=None, user=None, **kwargs):
         return False
     check = ptype if ptype in EVAL_PTYPES else "read"
     return bool(frappe.has_permission("CRM Deal", doc=deal, ptype=check, user=user))
+
+
+def has_source_permission(doc, ptype=None, user=None, **kwargs):
+    """Access for FJK AI Run/Proposal mirrors the referenced SOURCE record.
+
+    Source access is the governing boundary (a source may not yet be linked to a
+    Deal — STG0-R01). Viewing an AI Run/Proposal never grants authoritative CRM
+    write capability. No new role is introduced.
+    """
+    user = user or frappe.session.user
+    if user == "Administrator":
+        return True
+    if "System Manager" in frappe.get_roles(user):
+        return True
+    source_doctype = doc.get("source_doctype")
+    source_name = doc.get("source_name")
+    if not source_doctype or not source_name:
+        return False
+    check = ptype if ptype in EVAL_PTYPES else "read"
+    return bool(frappe.has_permission(source_doctype, doc=source_name, ptype=check, user=user))

@@ -38,9 +38,12 @@ class ProviderConfig:
     # Proxy: explicit opt-in only; default forbids env-proxy inheritance.
     use_proxy_env: bool = False
 
-    # Bounded retry boundary (exact counts/backoff OPEN; mechanism owned by D12-B).
-    max_attempts: int = 1
+    # DS6 (approved): bounded transport retry — maximum TOTAL attempts plus
+    # capped exponential backoff with full jitter.
+    max_attempts: int = 3
     backoff_seconds: float = 1.0
+    backoff_cap: float = 8.0
+    retry_jitter: bool = True
 
     # Additional context keys permitted to leave the environment.
     allowed_context_keys: tuple[str, ...] = field(default=("language", "target_domains"))

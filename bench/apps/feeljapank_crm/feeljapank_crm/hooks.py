@@ -21,6 +21,10 @@ fixtures = [
 has_permission = {
     "FJK Quotation": "feeljapank_crm.permissions.has_permission",
     "FJK Quotation Version": "feeljapank_crm.permissions.has_permission",
+    # FJK AI Run/Proposal/Promotion mirror the referenced SOURCE record's permission.
+    "FJK AI Interpretation Run": "feeljapank_crm.permissions.has_source_permission",
+    "FJK AI Proposal": "feeljapank_crm.permissions.has_source_permission",
+    "FJK AI Proposal Promotion": "feeljapank_crm.permissions.has_source_permission",
 }
 
 # D1 structured-requirements validation on the native Deal.

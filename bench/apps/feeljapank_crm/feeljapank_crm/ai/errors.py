@@ -94,3 +94,12 @@ class PolicyViolationError(ValidationError):
     Distinct from ordinary schema/semantic ``ValidationError`` so callers can
     treat authority/credential/instruction attempts as hostile output.
     """
+
+
+class RedirectRefusedError(AIProviderError):
+    """Provider/transport refused a redirect (D12-F: non-retryable).
+
+    Kept out of the transport retry set so a refused redirect is terminal.
+    """
+
+    category = ErrorCategory.PROVIDER_UNAVAILABLE

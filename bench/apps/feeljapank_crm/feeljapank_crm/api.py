@@ -554,3 +554,92 @@ def get_trip_seed_snapshot(deal):
         "organization": frappe.db.get_value("CRM Deal", deal, "organization"),
         "confirmed_quotation": quoting,
     }
+
+
+@frappe.whitelist()
+def record_proposal_disposition(proposal, disposition, edited_value=None, reason=None, superseded_by=None):
+    """Record one append-only human disposition on an FJK AI Proposal (FK-D12-E).
+
+    Datum-level, attributable decision; updates the current ``lifecycle_state``
+    via an immutable decision row. NEVER writes authoritative CRM data, never
+    promotes, never selects/resolves a Deal, and never touches Information Status.
+    Existing decision rows are immutable (guarded by FJK AI Proposal).
+    """
+    from feeljapank_crm.feeljapank_crm.doctype.fjk_ai_proposal.fjk_ai_proposal import (
+        ALLOWED_TRANSITIONS,
+        PROMOTION_ELIGIBLE_STATES,
+        TERMINAL_STATES,
+    )
+
+    if frappe.session.user in (None, "", "Guest"):
+        frappe.throw(_("Login is required to review an AI proposal"), frappe.PermissionError)
+
+    doc = frappe.get_doc("FJK AI Proposal", proposal)
+    # Existing FJK/Frappe authorization (source-mirrored via has_source_permission).
+    doc.check_permission("write")
+
+    old_state = doc.lifecycle_state
+    if old_state in TERMINAL_STATES:
+        frappe.throw(_("Proposal {0} is terminal ({1})").format(doc.name, old_state))
+    if disposition not in ALLOWED_TRANSITIONS.get(old_state, set()):
+        frappe.throw(_("Illegal disposition {0} from {1}").format(disposition, old_state))
+
+    if disposition == "EDITED_ACCEPTED" and not (edited_value or "").strip():
+        frappe.throw(_("edited_value is required for EDITED_ACCEPTED"))
+
+    if disposition == "SUPERSEDED":
+        if not superseded_by:
+            frappe.throw(_("superseded_by is required for SUPERSEDED"))
+        if superseded_by == doc.name:
+            frappe.throw(_("A proposal cannot supersede itself"))
+        if not frappe.db.exists("FJK AI Proposal", superseded_by):
+            frappe.throw(_("Successor proposal {0} does not exist").format(superseded_by))
+        successor = frappe.get_doc("FJK AI Proposal", superseded_by)
+        for row in successor.decisions:
+            if row.disposition == "SUPERSEDED" and row.superseded_by == doc.name:
+                frappe.throw(_("Circular supersession is not allowed"))
+
+    doc.append(
+        "decisions",
+        {
+            "disposition": disposition,
+            "from_state": old_state,
+            "to_state": disposition,
+            "reviewer": frappe.session.user,
+            "decided_at": now(),
+            "edited_value": edited_value if disposition == "EDITED_ACCEPTED" else None,
+            "reason": reason,
+            "superseded_by": superseded_by if disposition == "SUPERSEDED" else None,
+        },
+    )
+    doc.lifecycle_state = disposition
+    doc.save()
+
+    return {
+        "proposal": doc.name,
+        "from_state": old_state,
+        "to_state": disposition,
+        "lifecycle_state": doc.lifecycle_state,
+        "promotion_eligible": doc.lifecycle_state in PROMOTION_ELIGIBLE_STATES,
+    }
+
+
+@frappe.whitelist()
+def promote_ai_proposal(proposal, target_deal, target_row=None, override=False):
+    """Promote an accepted / edited-accepted AI Proposal into authoritative CRM (FK-D12-F).
+
+    Human-authorized; explicit allow-listed target; no silent overwrite; append-only
+    audit; idempotent. Never selects/resolves a Deal, never sets Information Status /
+    Info Complete / quotation state.
+    """
+    from feeljapank_crm import ai_promotion
+
+    if isinstance(override, str):
+        override = override.strip().lower() in ("1", "true", "yes")
+
+    return ai_promotion.promote_proposal(
+        proposal=proposal,
+        target_deal=target_deal,
+        target_row=target_row or None,
+        override=bool(override),
+    )

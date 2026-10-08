@@ -54,6 +54,8 @@ def build_deepseek_service(secret_provider: SecretProvider | None = None) -> AIS
         HTTPTransport(config),
         max_attempts=config.max_attempts,
         backoff_seconds=config.backoff_seconds,
+        backoff_cap=config.backoff_cap,
+        jitter=config.retry_jitter,
     )
     provider = DeepSeekProvider(config=config, transport=transport, api_key=api_key)
     return AIService(provider=provider, egress=EgressFilter(config))
